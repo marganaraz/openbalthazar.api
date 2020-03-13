@@ -6,6 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.cache
 
 # Build results
 [Dd]ebug/
@@ -25,8 +26,3 @@ msbuild.wrn
 
 # Visual Studio 2019
 .vs/
-.vs/OpenBalthazar.API/v16/.suo
-#OpenBalthazar.API/obj/Debug/netcoreapp3.1/OpenBalthazar.API.csprojAssemblyReference.cache
-*.cache
-OpenBalthazar.API.Solidity/obj/Debug/netcoreapp3.1/OpenBalthazar.API.Solidity.csprojAssemblyReference.cache
-OpenBalthazar.API.Vyper/obj/Debug/netcoreapp3.1/OpenBalthazar.API.Vyper.csprojAssemblyReference.cache
