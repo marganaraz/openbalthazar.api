@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API", "OpenBalthazar.API\OpenBalthazar.API.csproj", "{920604A0-76B8-4436-AC32-0E77F5FC9E30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API.Core", "OpenBalthazar.API.Core\OpenBalthazar.API.Core.csproj", "{9496AFD2-1E10-45E4-BAAF-C5D627439447}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API.Solidity", "OpenBalthazar.API.Solidity\OpenBalthazar.API.Solidity.csproj", "{5DDF465A-9AB3-4188-BBAB-50A36FD30692}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API.Vyper", "OpenBalthazar.API.Vyper\OpenBalthazar.API.Vyper.csproj", "{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etherscan", "Etherscan\Etherscan.csproj", "{CD0B1661-1292-4EDB-872B-0009309C1FAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{920604A0-76B8-4436-AC32-0E77F5FC9E30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{920604A0-76B8-4436-AC32-0E77F5FC9E30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{920604A0-76B8-4436-AC32-0E77F5FC9E30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{920604A0-76B8-4436-AC32-0E77F5FC9E30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9496AFD2-1E10-45E4-BAAF-C5D627439447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9496AFD2-1E10-45E4-BAAF-C5D627439447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9496AFD2-1E10-45E4-BAAF-C5D627439447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9496AFD2-1E10-45E4-BAAF-C5D627439447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DDF465A-9AB3-4188-BBAB-50A36FD30692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DDF465A-9AB3-4188-BBAB-50A36FD30692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DDF465A-9AB3-4188-BBAB-50A36FD30692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DDF465A-9AB3-4188-BBAB-50A36FD30692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E760805-25FD-4F8F-B34E-657229F7C9F3}
+	EndGlobalSection
+EndGlobal
