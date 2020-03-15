@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API.Solidity"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBalthazar.API.Vyper", "OpenBalthazar.API.Vyper\OpenBalthazar.API.Vyper.csproj", "{69D54F62-820E-4DFC-BCA9-EA1BD3D8351C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etherscan", "Etherscan\Etherscan.csproj", "{CD0B1661-1292-4EDB-872B-0009309C1FAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etherscan", "Etherscan\Etherscan.csproj", "{CD0B1661-1292-4EDB-872B-0009309C1FAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBalthazar.API.UnitTest", "OpenBalthazar.API.UnitTest\OpenBalthazar.API.UnitTest.csproj", "{DE2AC02B-3232-4722-9EBA-A6C9A591C362}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD0B1661-1292-4EDB-872B-0009309C1FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE2AC02B-3232-4722-9EBA-A6C9A591C362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE2AC02B-3232-4722-9EBA-A6C9A591C362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE2AC02B-3232-4722-9EBA-A6C9A591C362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE2AC02B-3232-4722-9EBA-A6C9A591C362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

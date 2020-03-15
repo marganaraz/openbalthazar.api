@@ -29,34 +29,12 @@ namespace OpenBalthazar.API.Controllers
         {
             // En base a la extension, levanto por REFLECTION el analizador correcto
             string ext = path.Substring(path.LastIndexOf(".") + 1, path.Length - 1 - path.LastIndexOf("."));
-            string assembleName = string.Empty;
-            string typeName = string.Empty;
+            
 
             if (!(ext.Equals("sol") || ext.Equals("vy")))
             {
                 ext += "sol";
             }
-
-            switch (ext)
-            {
-                case "sol":
-                    assembleName = "OpenBalthazar.API.Solidity.dll";
-                    typeName = "OpenBalthazar.API.Solidity.Solidity";
-                    break;
-
-                case "vy":
-                    assembleName = "Vyper.dll";
-                    typeName = "Vyper.Vyper";
-                    break;
-                default:
-                    assembleName = "OpenBalthazar.API.Solidity.dll";
-                    typeName = "OpenBalthazar.API.Solidity.Solidity";
-                    break;
-            }
-
-            
-            Assembly assembly = Assembly.LoadFrom(_hostingEnvironment.ContentRootPath + "/bin/Debug/netcoreapp3.1/" + assembleName);
-            Type sol = assembly.GetType(typeName);
 
             var lang = Request.HttpContext.Features.Get<IRequestCultureFeature>();
             var dos = _httpContextAccessor.HttpContext.Request.Headers["Accept-Language"];
@@ -79,8 +57,7 @@ namespace OpenBalthazar.API.Controllers
                 idiom = Language.Portugues;
             }
 
-
-            ILanguage language = Activator.CreateInstance(sol) as ILanguage;
+            ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + "/bin/Debug/netcoreapp3.1/", ext);
 
             language.Code = code;
             language.Language = idiom;
@@ -88,7 +65,7 @@ namespace OpenBalthazar.API.Controllers
             language.Scan();
             StringBuilder sb = new StringBuilder();
 
-            //// Por cada regla muestro los resultados
+            // Por cada regla muestro los resultados
             foreach (ILanguageRule rule in language.Rules)
             {
                 foreach (int l in rule.Lines)
@@ -99,7 +76,7 @@ namespace OpenBalthazar.API.Controllers
                 if (rule.Lines.Count == 0) sb.AppendFormat("<li>No se encontraron coincidencias con el patron {0}</li>", rule.Name);
             }
 
-            return Ok(sb.ToString());
+            return Ok(language.Rules);
         }
     }
 }

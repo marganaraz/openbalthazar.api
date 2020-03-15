@@ -15,5 +15,10 @@
     <ProjectReference Include="..\OpenBalthazar.API.Vyper\OpenBalthazar.API.Vyper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Files\Etherscan\" />
+    <Folder Include="Files\Users\" />
+  </ItemGroup>
+
 
 </Project>

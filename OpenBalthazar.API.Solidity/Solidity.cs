@@ -55,6 +55,8 @@ namespace OpenBalthazar.API.Solidity
 
                     rules.Add(new TimestampDependenceRule(this));
 
+                    rules.Add(new ReentrancyRule(this));
+
                     initRules = true;
                 }
 
