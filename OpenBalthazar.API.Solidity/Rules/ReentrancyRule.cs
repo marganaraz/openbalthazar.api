@@ -91,6 +91,10 @@ namespace OpenBalthazar.API.Solidity.Rules
 
                 IParseTree tree = solidityParser.sourceUnit();
 
+                string treestring = tree.ToStringTree();
+                Console.Error.Write(treestring);
+
+
                 // <expression>
                 //blockStatement/*/
                 /// prog / func, -> all funcs under prog at root

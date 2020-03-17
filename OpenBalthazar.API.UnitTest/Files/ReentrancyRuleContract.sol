@@ -1,6 +1,6 @@
 ﻿pragma solidity ^0.4.18;
 
-constract TestReentrancyRule {
+contract TestReentrancyRule {
 
 	mapping (address => uint) balances;
 

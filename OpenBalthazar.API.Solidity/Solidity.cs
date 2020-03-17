@@ -51,9 +51,9 @@ namespace OpenBalthazar.API.Solidity
                     // Agrego las reglas por defecto
                     rules.Add(new TxOriginRule(this));
 
-                    rules.Add(new EqualsBalanceRule(this));
+                    //rules.Add(new EqualsBalanceRule(this));
 
-                    rules.Add(new TimestampDependenceRule(this));
+                    //rules.Add(new TimestampDependenceRule(this));
 
                     rules.Add(new ReentrancyRule(this));
 
