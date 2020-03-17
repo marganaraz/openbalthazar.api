@@ -9,7 +9,7 @@ contract TestReentrancyRule {
 		uint balance = balances [msg.sender];
 
 		if(msg.sender.call.value(balance)()) {
-			balances [msg.sender] = 0;
+			balances[msg.sender] = 0;
 		}
 	}
 

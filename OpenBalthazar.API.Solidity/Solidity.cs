@@ -49,7 +49,7 @@ namespace OpenBalthazar.API.Solidity
                 if (!initRules)
                 {
                     // Agrego las reglas por defecto
-                    rules.Add(new TxOriginRule(this));
+                    //rules.Add(new TxOriginRule(this));
 
                     //rules.Add(new EqualsBalanceRule(this));
 

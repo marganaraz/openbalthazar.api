@@ -1,0 +1,1 @@
+[{"SourceCode":"pragma solidity 0.5.11;\r\n\r\ncontract Empty{\r\n}","ABI":"[]","ContractName":"Empty","CompilerVersion":"v0.5.11\u002Bcommit.c082d0b4","OptimizationUsed":"0","Runs":"200","ConstructorArguments":"","Library":"","SwarmSource":"bzzr://50c08ac75d78ece4ca0e7145fa279fa80d7a18d85d5ebf6b9e29b180682498e3"}]

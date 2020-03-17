@@ -72,7 +72,7 @@ namespace OpenBalthazar.API.Solidity.Rules
             }
         }
 
-        public IList<int> Lines { get; } = new List<int>();
+        public IList<int> Lines { get; set; } = new List<int>();
 
         /// <summary>
         /// Metodo que verifica el patron de codigo <tx><.><origin>
@@ -84,6 +84,7 @@ namespace OpenBalthazar.API.Solidity.Rules
 
             try
             {
+                Lines = new List<int>();
                 AntlrInputStream inputStream = new AntlrInputStream(Parent.Code);
                 SolidityLexer solidityLexer = new SolidityLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(solidityLexer);
@@ -117,19 +118,31 @@ namespace OpenBalthazar.API.Solidity.Rules
                 //         //!*, -> nothing anywhere
                 //         / !*, -> nothing at root
 
-                      ParseTreePattern pattern = solidityParser.CompileParseTreePattern("msg.sender.transfer", SolidityParser.RULE_expression);
+                // expression -> <expression>.call.value(<functionCallArguments>)
+                ParseTreePattern pattern = solidityParser.CompileParseTreePattern("<expression>.<identifier>(<functionCallArguments>)", SolidityParser.RULE_expression);
                 IList<ParseTreeMatch> matches = pattern.FindAll(tree, "//expression");
 
-                Console.Write(pattern.ToString());
+                //Console.Write(pattern.ToString());
 
                 // Por cada "tx.origin" detectada, debo obtener la linea de codigo donde se identifico
                 foreach (ParseTreeMatch match in matches)
                 {
-                    if (match.Tree is ParserRuleContext)
+                    // Llamo a la funcion que contiene la sentencia
+                    //IParseTree parent = match.Tree.Parent.Parent;
+
+                    //ParseTreePattern patternAsignacion = solidityParser.CompileParseTreePattern("<expression> = <expression>", SolidityParser.RULE_expression);
+                    //IList<ParseTreeMatch> matches2 = patternAsignacion.FindAll(parent, "//expression");
+
+                if(match.Get("identifier").GetText().Equals("send") || match.Get("identifier").GetText().Equals("value"))
                     {
-                        Lines.Add(((ParserRuleContext)match.Tree).Start.Line);
+                        if (match.Tree is ParserRuleContext)
+                        {
+                            Lines.Add(((ParserRuleContext)match.Tree).Start.Line);
+                        }
                     }
                 }
+
+                // Despues de encontrar un match debe ver si hay una asignacion
             }
             catch (Exception ex)
             {
