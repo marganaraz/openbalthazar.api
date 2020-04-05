@@ -6,6 +6,7 @@ using OpenBalthazar.API.Solidity.g4;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static OpenBalthazar.API.Solidity.g4.SolidityParser;
 
 namespace OpenBalthazar.API.Solidity.Rules
 {
@@ -92,10 +93,6 @@ namespace OpenBalthazar.API.Solidity.Rules
 
                 IParseTree tree = solidityParser.sourceUnit();
 
-                string treestring = tree.ToStringTree();
-                Console.Error.Write(treestring);
-
-
                 // <expression>
                 //blockStatement/*/
                 /// prog / func, -> all funcs under prog at root
@@ -118,27 +115,75 @@ namespace OpenBalthazar.API.Solidity.Rules
                 //         //!*, -> nothing anywhere
                 //         / !*, -> nothing at root
 
-                // expression -> <expression>.call.value(<functionCallArguments>)
+                // expression -> <expression>.<identifier>(<functionCallArguments>)
                 ParseTreePattern pattern = solidityParser.CompileParseTreePattern("<expression>.<identifier>(<functionCallArguments>)", SolidityParser.RULE_expression);
                 IList<ParseTreeMatch> matches = pattern.FindAll(tree, "//expression");
 
-                //Console.Write(pattern.ToString());
-
-                // Por cada "tx.origin" detectada, debo obtener la linea de codigo donde se identifico
                 foreach (ParseTreeMatch match in matches)
                 {
-                    // Llamo a la funcion que contiene la sentencia
-                    //IParseTree parent = match.Tree.Parent.Parent;
-
-                    //ParseTreePattern patternAsignacion = solidityParser.CompileParseTreePattern("<expression> = <expression>", SolidityParser.RULE_expression);
-                    //IList<ParseTreeMatch> matches2 = patternAsignacion.FindAll(parent, "//expression");
-
-                if(match.Get("identifier").GetText().Equals("send") || match.Get("identifier").GetText().Equals("value"))
+                    // 
+                    if(match.Get("identifier").GetText().Equals("send") || match.Get("identifier").GetText().Equals("transfer") || (match.Get("identifier").GetText().Equals("value") && match.Get("expression").GetText().EndsWith("call")))
                     {
-                        if (match.Tree is ParserRuleContext)
+                        IParseTree parentTree = match.Tree;
+                        //if (match.Tree is ParserRuleContext)
+                        //{
+                        //    Lines.Add(((ParserRuleContext)match.Tree).Start.Line);
+                        //}
+
+                        // Tengo que decidir sobre que nodo trabajar!
+                        //if(match.Tree.Parent is IfStatementContext)
+                        //{
+                        //    // Si es un IF solo tengo que tomar el STATEMENT por TRUE
+                        //    parentTree = match.Tree.Parent.GetChild(4);
+                        //    // Para que no me tome los ifs
+                        //    //break;
+                        //}
+                        //else
+                        //{
+                            IParseTree parentTreeNode = match.Tree.Parent;
+                            while(parentTreeNode is ExpressionContext)
+                            {
+                                parentTreeNode = parentTreeNode.Parent;
+                            }
+                            string type = parentTreeNode.GetType().ToString();
+                            string parentType = parentTreeNode.Parent.GetType().ToString();
+
+                            if (parentTreeNode is IfStatementContext)
+                            {
+                                parentTree = parentTreeNode.GetChild(4);
+                            }
+                            else if (parentTreeNode.Parent is SimpleStatementContext)
+                            {
+                                IParseTree parseTreeSimple = parentTreeNode.Parent;
+                                while (parseTreeSimple is SimpleStatementContext || parseTreeSimple is StatementContext)
+                                {
+                                    parseTreeSimple = parseTreeSimple.Parent;
+                                }
+
+                                parentTree = parseTreeSimple;
+                                string tyy = parentTree.GetType().ToString();
+                            }
+                        //}
+
+
+                        ParseTreePattern patternAsignacion = solidityParser.CompileParseTreePattern("<expression> = <expression>", SolidityParser.RULE_expression);
+                        IList<ParseTreeMatch> matches2 = patternAsignacion.FindAll(parentTree, "//expression");
+
+                        foreach (ParseTreeMatch match2 in matches2)
                         {
-                            Lines.Add(((ParserRuleContext)match.Tree).Start.Line);
+                            if(match2.Tree is ParserRuleContext)
+                            {
+                                int math2Line = ((ParserRuleContext)match2.Tree).Start.Line;
+                                int mathLine = ((ParserRuleContext)match.Tree).Start.Line;
+
+                                if (math2Line > mathLine)
+                                {
+                                    Lines.Add(((ParserRuleContext)match2.Tree).Start.Line);
+                                }
+                            }
+                            
                         }
+                            
                     }
                 }
 

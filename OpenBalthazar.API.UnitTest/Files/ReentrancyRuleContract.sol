@@ -17,9 +17,9 @@ contract TestReentrancyRule {
 		
 		uint balance = balances[msg.sender];
 		
-		balances[msg.sender] = 0;
-
 		msg.sender.transfer(balance);
+
+		balances[msg.sender] = 0;
 		
 		// si la transferencia falla , se anula el
 		// cambio de estado y se recupera el saldo

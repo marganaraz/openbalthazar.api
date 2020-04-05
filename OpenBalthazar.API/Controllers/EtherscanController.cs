@@ -91,37 +91,47 @@ namespace OpenBalthazar.API.Controllers
         [HttpGet("scan_all")]
         public ActionResult ScanAll()
         {
-            // Armo la ruta completa al archivo
-            string filePath = _hostingEnvironment.ContentRootPath + "/Files/Etherscan/verifiedcontractaddress.csv";
+            // Armo la ruta completa al archivo CSV
+            string csvFilePath = _hostingEnvironment.ContentRootPath + "/Files/Etherscan/verifiedcontractaddress.csv";
 
-            string[] allFile = System.IO.File.ReadAllLines(filePath);
+            // Arreglo que contiene el contenido del archivo CSV de a un registro por indice
+            string[] csvFile = System.IO.File.ReadAllLines(csvFilePath);
 
+            int filesWithError = 0;
+
+            // Resultado con errores
             List<Error> errores = new List<Error>();
 
-            foreach (string f in allFile)
+            // Por cada renglon del archivo CSV
+            foreach (string f in csvFile)
             {
+                // Separo el contenido en columnas
                 string[] columns = f.Split(',');
 
+                // Obtengo la la direccion ETH del smart contract
                 string address = columns[1].Substring(1, columns[1].Length - 2);
 
                 try
                 {
+                    // Armo el path al archivol SOL
                     string smartContractPath = _hostingEnvironment.ContentRootPath + "/Files/Etherscan/" + address + ".sol";
 
                     // Leo el contrato de disco
                     string smartContract = System.IO.File.ReadAllText(smartContractPath);
 
                     // Lo deserializo
-                    var result = JsonSerializer.Deserialize<List<EtherscanSmartContract>>(smartContract);
+                    var smartContractContent = JsonSerializer.Deserialize<List<EtherscanSmartContract>>(smartContract);
 
-                    // Lo analizo y retorno los resultados
+                    // Instancia el motor de analisis
                     ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + "/bin/Debug/netcoreapp3.1/", "sol");
 
-                    language.Code = result[0].SourceCode;
+                    // Paso el codigo del contrato
+                    language.Code = smartContractContent[0].SourceCode;
 
+                    // Lo escaneo
                     language.Scan();
-                    StringBuilder sb = new StringBuilder();
 
+                    bool tieneError = false;
 
                     // Por cada regla muestro los resultados
                     foreach (ILanguageRule rule in language.Rules)
@@ -129,22 +139,20 @@ namespace OpenBalthazar.API.Controllers
                         foreach (int l in rule.Lines)
                         {
                             errores.Add(new Error(address + ".sol", l, rule.Error, rule.Name));
-                            //sb.AppendFormat("<li><a href='#' onclick='mark({1} - 1)'>Line {1} - {2}</a>: {3}.</li>", l, rule.Name, rule.Error);
+                            tieneError = true;
                         }
-
-                        //if (rule.Lines.Count == 0) sb.AppendFormat("<li>No se encontraron coincidencias con el patron {0}</li>", rule.Name);
                     }
 
-                    if (errores.Count == 3) break;
+                    if(tieneError) filesWithError++;
                 }
                 catch(Exception ex)
                 {
-                    errores.Add(new Error(address + ".sol", 0, "El archivo no se pudo parsear", "JSON"));
+                    //errores.Add(new Error(address, 0, "El archivo no se pudo parsear", "JSON"));
                 }
             }
 
             // y lo retorno
-            return Ok(errores);
+            return Ok(new Resultado(csvFile.Length, filesWithError, errores));
         }
 
         [HttpGet("read_all")]
@@ -193,19 +201,35 @@ namespace OpenBalthazar.API.Controllers
             return Ok();
         }
 
+        public class Resultado
+        {
+            public int Files { get; set; }
+            public int FilesWithErrors { get; set; }
+            public List<Error> Errors { get; set; }
+
+            public Resultado(int files, int filesWithError, List<Error> errors)
+            {
+                Files = files;
+                FilesWithErrors = filesWithError;
+                Errors = errors;
+            }
+        }
+
         public class Error
         {
             public string FileName { get; set; }
             public int Line { get; set; } = 0;
             public string ErrorMsg { get; set; } = string.Empty;
             public string Rule { get; set; } = string.Empty;
+            public string Url { get; set; }
 
-            public Error(string fileName, int line, string errorMsg, string rule)
+            public Error(string address, int line, string errorMsg, string rule)
             {
-                FileName = fileName;
+                FileName = address + ".sol";
                 Line = line;
                 ErrorMsg = errorMsg;
                 Rule = rule;
+                Url = string.Format("<a href='api/scanner/GetCode?address={0}' target=”_blank”></a>", address);
             }
         }
     }

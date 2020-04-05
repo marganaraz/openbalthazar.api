@@ -26,3 +26,4 @@ msbuild.wrn
 
 # Visual Studio 2019
 .vs/
+OpenBalthazar.API/Properties/PublishProfiles/FolderProfile.pubxml
