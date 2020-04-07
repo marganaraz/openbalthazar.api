@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="Files\Etherscan\" />
+    <Folder Include="Files\Users\" />
   </ItemGroup>
 
 

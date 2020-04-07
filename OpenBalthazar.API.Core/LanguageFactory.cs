@@ -11,7 +11,7 @@ namespace OpenBalthazar.API.Core
     {
         private static ILanguage language;
 
-        public static ILanguage GetInstance(string root, string ext)
+        public static ILanguage GetInstance(string root, string ext, string userLangs)
         {
             if(language == null)
             {
@@ -39,6 +39,27 @@ namespace OpenBalthazar.API.Core
                 Type sol = assembly.GetType(typeName);
 
                 language = Activator.CreateInstance(sol) as ILanguage;
+
+                // Seteo el idioma que corresponde
+                var firstLang = userLangs.Split(',').FirstOrDefault();
+                var defaultLang = string.IsNullOrEmpty(firstLang) ? "en" : firstLang;
+
+                Language idiomEnum = Language.English;
+
+                if (defaultLang.ToLower().Contains("es"))
+                {
+                    idiomEnum = Language.Spanish;
+                }
+                else if (defaultLang.ToLower().Contains("en"))
+                {
+                    idiomEnum = Language.English;
+                }
+                else if (defaultLang.ToLower().Contains("pt"))
+                {
+                    idiomEnum = Language.Portugues;
+                }
+
+                language.Language = idiomEnum;
             }
 
             return language;

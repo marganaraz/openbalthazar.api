@@ -18,13 +18,16 @@ namespace OpenBalthazar.API.Controllers
     [ApiController]
     public class EtherscanController : ControllerBase
     {
+        private string DEVELOPMENT_PATH = "/bin/Debug/netcoreapp3.1/";
         private readonly IConfiguration _configuration;
         private IHostingEnvironment _hostingEnvironment;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public EtherscanController(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public EtherscanController(IConfiguration configuration, IHostingEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet("GetBalance")]
@@ -57,14 +60,29 @@ namespace OpenBalthazar.API.Controllers
                 System.IO.File.AppendAllText(path, texto);
             }
 
+            // Tomo los idiomas desde el navegador
+            var userLangs = _httpContextAccessor.HttpContext.Request.Headers["Accept-Language"].ToString();
+
             // Leo el contrato de disco
             string smartContract = System.IO.File.ReadAllText(path);
 
             // Lo deserializo
             var result = JsonSerializer.Deserialize<List<EtherscanSmartContract>>(smartContract);
 
+            // Determino donde se almacenan las librerias 
+            string folderPath = string.Empty;
+
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                folderPath = DEVELOPMENT_PATH;
+            }
+            else
+            {
+                folderPath = "/";
+            }
+
             // Lo analizo y retorno los resultados
-            ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + "/bin/Debug/netcoreapp3.1/", "sol");
+            ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + folderPath, "sol", userLangs);
 
             language.Code = result[0].SourceCode;
 
@@ -122,8 +140,23 @@ namespace OpenBalthazar.API.Controllers
                     // Lo deserializo
                     var smartContractContent = JsonSerializer.Deserialize<List<EtherscanSmartContract>>(smartContract);
 
+                    // Tomo los idiomas desde el navegador
+                    var userLangs = _httpContextAccessor.HttpContext.Request.Headers["Accept-Language"].ToString();
+
+                    // Determino donde se almacenan las librerias 
+                    string folderPath = string.Empty;
+
+                    if (_hostingEnvironment.IsDevelopment())
+                    {
+                        folderPath = DEVELOPMENT_PATH;
+                    }
+                    else
+                    {
+                        folderPath = "/";
+                    }
+
                     // Instancia el motor de analisis
-                    ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + "/bin/Debug/netcoreapp3.1/", "sol");
+                    ILanguage language = LanguageFactory.GetInstance(_hostingEnvironment.ContentRootPath + folderPath, "sol", userLangs);
 
                     // Paso el codigo del contrato
                     language.Code = smartContractContent[0].SourceCode;
