@@ -73,7 +73,7 @@ namespace OpenBalthazar.API.Solidity.Rules
             }
         }
 
-        public IList<int> Lines { get; set; } = new List<int>();
+        public IList<int> Lines { get; } = new List<int>();
 
         /// <summary>
         /// Metodo que verifica el patron de codigo <tx><.><origin>
@@ -85,7 +85,8 @@ namespace OpenBalthazar.API.Solidity.Rules
 
             try
             {
-                Lines = new List<int>();
+                Lines.Clear();
+
                 AntlrInputStream inputStream = new AntlrInputStream(Parent.Code);
                 SolidityLexer solidityLexer = new SolidityLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(solidityLexer);

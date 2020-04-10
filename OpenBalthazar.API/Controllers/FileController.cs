@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using OpenBalthazar.API.Models;
 
 namespace OpenBalthazar.API.Controllers
 {
@@ -108,11 +109,40 @@ namespace OpenBalthazar.API.Controllers
             }
 
             /// <summary>
-            /// Delete a file at @path from disk
+            /// Uplaod a source code file into the user's folder.
             /// </summary>
-            /// <param name="path"></param>
             /// <returns></returns>
-            [HttpGet("delete")]
+            [HttpPost("upload")]
+            public async Task<IActionResult> UploadFile()
+            {
+                var claimsIdentity = this.User.Identity as ClaimsIdentity;
+
+                var file = Request.Form.Files[0];
+
+                string userName = claimsIdentity.Name.Split('@')[0];
+
+                string path = _hostingEnvironment.ContentRootPath + "/Files/Users/" + userName + "/" + file.FileName;
+
+                if (!System.IO.File.Exists(path))
+                {
+                    using (var fileStream = new System.IO.FileStream(path, System.IO.FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Filename already exists.");
+                }
+            }
+
+        /// <summary>
+        /// Delete a file at @path from disk
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        [HttpGet("delete")]
             public async Task<IActionResult> Delete(string path)
             {
                 if (System.IO.File.Exists(path))

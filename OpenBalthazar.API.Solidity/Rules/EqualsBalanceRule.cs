@@ -79,6 +79,8 @@ namespace OpenBalthazar.API.Solidity.Rules
 
             try
             {
+                Lines.Clear();
+
                 AntlrInputStream inputStream = new AntlrInputStream(Parent.Code);
                 SolidityLexer solidityLexer = new SolidityLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(solidityLexer);

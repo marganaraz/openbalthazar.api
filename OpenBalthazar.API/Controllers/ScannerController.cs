@@ -78,14 +78,14 @@ namespace OpenBalthazar.API.Controllers
                     
                     // Ejecuto el analisis 
                     language.Scan();
-                    List<Resultado> resultado = new List<Resultado>();
+                    List<ScannerResultado> resultado = new List<ScannerResultado>();
 
                     // Por cada regla muestro los resultados
                     foreach (ILanguageRule rule in language.Rules)
                     {
                         foreach (int l in rule.Lines)
                         {
-                            resultado.Add(new Resultado(l, rule.Name, rule.Error, rule.Severity.ToString().ToLower()));
+                            resultado.Add(new ScannerResultado(l, rule.Name, rule.Error, rule.Severity.ToString().ToLower()));
                         }
                     }
 
@@ -102,6 +102,7 @@ namespace OpenBalthazar.API.Controllers
 
         #region Utils
 
+        [AllowAnonymous]
             [HttpGet("GetCode")]
             public ActionResult GetCode(string address)
             {

@@ -106,7 +106,7 @@ namespace OpenBalthazar.API.Controllers
             return Ok(errores);
         }
 
-        [HttpGet("scan_all")]
+        [HttpGet("scanAll")]
         public ActionResult ScanAll()
         {
             // Armo la ruta completa al archivo CSV
@@ -115,14 +115,17 @@ namespace OpenBalthazar.API.Controllers
             // Arreglo que contiene el contenido del archivo CSV de a un registro por indice
             string[] csvFile = System.IO.File.ReadAllLines(csvFilePath);
 
-            int filesWithError = 0;
+            EtherscanResultado resultado = new EtherscanResultado();
+            Dictionary<string, int> rules = new Dictionary<string, int>();
 
-            // Resultado con errores
-            List<Error> errores = new List<Error>();
+            resultado.Files = csvFile.Length;
 
             // Por cada renglon del archivo CSV
             foreach (string f in csvFile)
             {
+                // Resultado con errores
+                List<Error> errores = new List<Error>();
+
                 // Separo el contenido en columnas
                 string[] columns = f.Split(',');
 
@@ -165,18 +168,37 @@ namespace OpenBalthazar.API.Controllers
                     language.Scan();
 
                     bool tieneError = false;
+                    int errors = 0;
+                    int warnings = 0;
 
                     // Por cada regla muestro los resultados
                     foreach (ILanguageRule rule in language.Rules)
                     {
                         foreach (int l in rule.Lines)
                         {
-                            errores.Add(new Error(address + ".sol", l, rule.Error, rule.Name));
+                            if(!rules.ContainsKey(rule.Name))
+                            {
+                                rules.Add(rule.Name, 1);
+                            }
+                            else
+                            {
+                                rules[rule.Name]++;
+                            }
+
+                            errores.Add(new Error(address, l, rule.Error, rule.Name));
+
+                            if (rule.Severity.Equals(Severity.Error)) errors++;
+                            else if (rule.Severity.Equals(Severity.Warning)) warnings++;
+
                             tieneError = true;
                         }
                     }
 
-                    if(tieneError) filesWithError++;
+                    if (tieneError)
+                    {
+                        resultado.FilesErrors++;
+                        resultado.FilesWithErrors.Add(new EtherscanFile(address, errores, errors, warnings));
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -184,8 +206,10 @@ namespace OpenBalthazar.API.Controllers
                 }
             }
 
+            resultado.Rules = rules;
+
             // y lo retorno
-            return Ok(new Resultado(csvFile.Length, filesWithError, errores));
+            return Ok(resultado);
         }
 
         [HttpGet("read_all")]
@@ -234,17 +258,27 @@ namespace OpenBalthazar.API.Controllers
             return Ok();
         }
 
-        public class Resultado
+        public class EtherscanResultado
         {
             public int Files { get; set; }
-            public int FilesWithErrors { get; set; }
-            public List<Error> Errors { get; set; }
+            public int FilesErrors { get; set; }
+            public List<EtherscanFile> FilesWithErrors { get; set; } = new List<EtherscanFile>();
+            public Dictionary<string, int> Rules { get; set; }
+        }
 
-            public Resultado(int files, int filesWithError, List<Error> errors)
+        public class EtherscanFile
+        {
+            public string Filename { get; set; }
+            public int Errors { get; set; }
+            public int Warnings { get; set; }
+            public List<Error> ErrorsList { get; set; }
+
+            public EtherscanFile(string fileName, List<Error> errorsList, int error, int warnings)
             {
-                Files = files;
-                FilesWithErrors = filesWithError;
-                Errors = errors;
+                Filename = fileName;
+                ErrorsList = errorsList;
+                Errors = error;
+                Warnings = warnings;
             }
         }
 

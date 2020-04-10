@@ -16,11 +16,6 @@ namespace OpenBalthazar.API.Solidity.Rules
     /// </summary>
     public class TimestampDependenceRule : ILanguageRule
     {
-        /// <summary>
-        /// Variable privada donde se almacenan las lineas del codigo fuente donde se encuentran los patrones detectados
-        /// </summary>
-        private IList<int> lines = new List<int>();
-
         public TimestampDependenceRule(ILanguage parent)
         {
             Parent = parent;
@@ -79,10 +74,7 @@ namespace OpenBalthazar.API.Solidity.Rules
             }
         }
 
-        public IList<int> Lines
-        {
-            get { return lines; }
-        }
+        public IList<int> Lines { get; } = new List<int>();
 
         /// <summary>
         /// Metodo que verifica el patron de codigo <tx><.><origin>
@@ -94,6 +86,7 @@ namespace OpenBalthazar.API.Solidity.Rules
 
             try
             {
+                Lines.Clear();
                 AntlrInputStream inputStream = new AntlrInputStream(Parent.Code);
                 SolidityLexer solidityLexer = new SolidityLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(solidityLexer);
@@ -110,7 +103,7 @@ namespace OpenBalthazar.API.Solidity.Rules
                 {
                     if (match.Tree is ParserRuleContext)
                     {
-                        lines.Add(((ParserRuleContext)match.Tree).Start.Line);
+                        Lines.Add(((ParserRuleContext)match.Tree).Start.Line);
                     }
                 }
             }
