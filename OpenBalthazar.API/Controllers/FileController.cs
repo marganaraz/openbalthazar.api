@@ -1,5 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Etherscan.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -109,7 +113,7 @@ namespace OpenBalthazar.API.Controllers
             }
 
             /// <summary>
-            /// Uplaod a source code file into the user's folder.
+            /// Upload a source code file into the user's folder.
             /// </summary>
             /// <returns></returns>
             [HttpPost("upload")]
@@ -136,13 +140,49 @@ namespace OpenBalthazar.API.Controllers
                     return BadRequest("Filename already exists.");
                 }
             }
+    
+            /// <summary>
+            /// Import a file from a Etherscan
+            /// </summary>
+            /// <param name="address"></param>
+            /// <returns></returns>
+            [HttpGet("import")]
+            public ActionResult ImportFile(string address)
+            {
+                try
+                {
+                    var claimsIdentity = this.User.Identity as ClaimsIdentity;
 
-        /// <summary>
-        /// Delete a file at @path from disk
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        [HttpGet("delete")]
+                    string userName = claimsIdentity.Name.Split('@')[0];
+
+                    string sourcePath = _hostingEnvironment.ContentRootPath + "/Files/Etherscan/" + address + ".sol";
+
+                    string targetPath = _hostingEnvironment.ContentRootPath + "/Files/Users/" + userName + "/" + address + ".sol";
+
+                    if (!System.IO.Directory.Exists(targetPath))
+                    {
+                        string smartContract = System.IO.File.ReadAllText(sourcePath);
+
+                        // Lo deserializo
+                        var result = JsonSerializer.Deserialize<List<EtherscanSmartContract>>(smartContract);
+
+                        System.IO.File.WriteAllText(targetPath, result[0].SourceCode);
+                    }
+                
+                    return Ok();
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+
+            /// <summary>
+            /// Delete a file at @path from disk
+            /// </summary>
+            /// <param name="path"></param>
+            /// <returns></returns>
+            [HttpGet("delete")]
             public async Task<IActionResult> Delete(string path)
             {
                 if (System.IO.File.Exists(path))
